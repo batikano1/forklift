@@ -34,7 +34,7 @@ func ensureNamespace(plan *api.Plan, client client.Client) error {
         return err
     }
     if exists {
-        return nill
+        return nil
     }
     err := cl.Create(context.TODO(), ns)
     if err != nil && k8serr.IsNotFound(err){
