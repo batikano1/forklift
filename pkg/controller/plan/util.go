@@ -11,9 +11,9 @@ import (
 )
 
 
-func namespaceExists(name string, cl client.Client) (bool, error) {
+func namespaceExists(name string, client client.Client) (bool, error) {
    ns := &core.Namespace{}
-   err := cl.Get(context.TODO(), client.ObjectKey{Name: name}, ns)
+   err := client.Get(context.TODO(), client.ObjectKey{Name: name}, ns)
    if err != nil {
       if k8serr.IsNotFound(err) {
           return false, nil
@@ -36,7 +36,7 @@ func ensureNamespace(plan *api.Plan, client client.Client) error {
     if exists {
         return nil
     }
-    err := cl.Create(context.TODO(), ns)
+    err = client.Create(context.TODO(), ns)
     if err != nil && k8serr.IsNotFound(err){
         if err != nil && k8serr.IsAlreadyExists(err) {
          err = nil
