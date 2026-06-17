@@ -2173,7 +2173,7 @@ func createVddkCheckJob(plan *api.Plan) *batchv1.Job {
 								},
 							},
 							VolumeMounts: []core.VolumeMount{mount},
-							Command:      []string{"file", "-E", "/opt/vmware-vix-disklib-distrib/lib64/libvixDiskLib.so"},
+							Command:      []string{"sh", "-c", "file -E /opt/vmware-vix-disklib-distrib/lib64/libvixDiskLib.so*"},
 						},
 					},
 					Volumes: volumes,
