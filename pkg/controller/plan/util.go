@@ -11,9 +11,9 @@ import (
 )
 
 
-func namespaceExists(name string, client client.Client) (bool, error) {
+func namespaceExists(name string, c client.Client) (bool, error) {
    ns := &core.Namespace{}
-   err := client.Get(context.TODO(), client.ObjectKey{Name: name}, ns)
+   err := c.Get(context.TODO(), client.ObjectKey{Name: name}, ns)
    if err != nil {
       if k8serr.IsNotFound(err) {
           return false, nil
@@ -23,20 +23,20 @@ func namespaceExists(name string, client client.Client) (bool, error) {
    return true, nil
 }
 // Ensure the namespace exists on the destination.
-func ensureNamespace(plan *api.Plan, client client.Client) error {
+func ensureNamespace(plan *api.Plan, c client.Client) error {
 	ns := &core.Namespace{
 		ObjectMeta: meta.ObjectMeta{
 			Name: plan.Spec.TargetNamespace,
 		},
     }
-    exists, err := namespaceExists(plan.Spec.TargetNamespace, client)
+    exists, err := namespaceExists(plan.Spec.TargetNamespace, c)
     if err != nil {
         return err
     }
     if exists {
         return nil
     }
-    err = client.Create(context.TODO(), ns)
+    err = c.Create(context.TODO(), ns)
     if err != nil && k8serr.IsNotFound(err){
         if err != nil && k8serr.IsAlreadyExists(err) {
          err = nil
@@ -46,7 +46,7 @@ func ensureNamespace(plan *api.Plan, client client.Client) error {
 }
 
 // Ensure the config map exists on the destination
-func ensureConfigMap(cm *core.ConfigMap, name func(plan *api.Plan) string, plan *api.Plan, client client.Client) error {
+func ensureConfigMap(cm *core.ConfigMap, name func(plan *api.Plan) string, plan *api.Plan, c client.Client) error {
 	cm.ObjectMeta = meta.ObjectMeta{
 		Name:      name(plan),
 		Namespace: plan.Spec.TargetNamespace,
